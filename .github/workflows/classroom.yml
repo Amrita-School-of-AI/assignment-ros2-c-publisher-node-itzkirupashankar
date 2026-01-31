@@ -9,20 +9,20 @@ permissions:
   contents: read
 jobs:
   run-autograding-tests:
-    runs-on: ubuntu-24.04
+    runs-on: ubuntu-latest
+    container:
+      image: osrf/ros:jazzy-desktop
     if: github.actor != 'github-classroom[bot]'
     steps:
-    # 1. Checkout Code
       - name: Checkout code
         uses: actions/checkout@v4
 
-      # 2. Setup ROS 2 Jazzy Environment
-      - name: Setup ROS 2
-        uses: ros-tooling/setup-ros@v0.7
-        with:
-          required-ros-distributions: jazzy
+      - name: Build Workspace
+        shell: bash
+        run: |
+          source /opt/ros/jazzy/setup.bash
+          colcon build --packages-select ros2_publisher
 
-      # 3. Run the Grader
       - name: ROS2 Publisher Test
         id: ros-test
         uses: classroom-resources/autograding-command-grader@v1
